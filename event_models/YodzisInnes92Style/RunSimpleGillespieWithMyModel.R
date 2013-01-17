@@ -26,7 +26,7 @@ nu <- YodzisInnesNu(M)
 # This could possibly be due to adding the wrong stuff... but tests on my code
 # would suggest that u is always chosen correctly and that the propensity function
 # works
-#minM <- min(M) * 0.9
+minM <- min(M) * 0.9
 # minM made slightly smaller, in case we accidentally wipe out the smallest species
 updateState <- cmpfun(function(x, t, a, a0, nu, r1, r2) {
 
