@@ -1,10 +1,33 @@
 if(!(exists('MyYodzisInnesFlux'))) source('MyModel.R')
 if(!(exists('Gillespie'))) source('../../gillespie/SimpleGillespie.R')
 
-preparams <- preparams
+realtf <- 10
+
+data(TL84)
+community <- TL84
+x0 <- rep(0, nrow(community$nodes))
+
+M <- community$nodes[, 'M']
+
+preparams <- list(
+  a.constants = YodzisInnes92AConstants(),
+  f.constants = AllFConstantsEqual(),
+  e.producer = 0.45,
+  e.consumer = 0.85,
+  fe = 1,
+  W = 10^(-3.5), # from Lawrence Paper (means kind of modal values taken from graphs)
+  d = 0,
+  q = 1,
+  K = 10^(-0.2),       # from Lawrence paper
+  a = 1,
+
+  # I_rates params
+  immigration.c = 1e-14, #1e-12,   # less immigration
+  immigration.e = -0.75 + 0.2)
+
 pars <- do.call(ModelParamsSpec, preparams[-(11:12)])
 pars <- IntermediateModelParams(community, pars)
-params <- BuildModelParams(community, pars, 1/4)
+params <- FinalModelParams(community, pars, 1/4)
 params <- append(params, list(immigration = preparams[[11]] *
                                     M ^ preparams[[12]] * 
                                     params$one.t.prime)) # Puts it on same scale

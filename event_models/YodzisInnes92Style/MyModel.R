@@ -7,13 +7,21 @@ require('compiler')
 if (!is.loaded("MyYodzisInnesState")) dyn.load("myGruyere_model.so")
 if (!is.loaded("MyYodzisInnesState")) stop("myGruyere_model.so didn't load...")
 
+# Adds 1/M to params function
+# Use instead of BuildModelParams
+FinalModelParams <- function(community, params, exponent = 1/4) {
+    params <- BuildModelParams(community, params, exponent)
+    params$invM <- (community$nodes[, 'M']) ^ (-1)
+    return (params)
+}
+
 MyYodzisInnesFlux <- function (B, params) 
 cmpfun({
     res <- .C("MyYodzisInnesState", params$n.species, params$K, 
         params$a, params$q, params$d, params$W, params$producers.c, 
         params$n.producers, params$consumers.c, params$n.consumers, 
         params$rho, params$x, params$y, params$e, params$fe, 
-        B,
+        B, params$invM,
         #dydt = numeric(params$n.species), My function does not compute dydt
         # whereas Lawrence's YodzisInnesState does
         growth = numeric(params$n.species), 
@@ -46,9 +54,11 @@ YodzisInnesNu <- function(M, immigration = TRUE) {
     M_birth <- M_immigration <- diag(numspecies) * M # Creates Matrix with M on diagonal
     M_death <- M_birth * -1
     # So that nu is rows as species, columns as events
-    out <- ifelse(immigration, yes = cbind(M_birth, M_death, M_immigration),
-        no = cbind(M_birth, M_death))
-    
+    out <- if (immigration) {
+               cbind(M_birth, M_death, M_immigration)
+           } else {
+               cbind(M_birth, M_death)
+           }
     return (out)
 }
 

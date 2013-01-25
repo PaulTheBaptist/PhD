@@ -114,7 +114,9 @@ void MyYodzisInnesState(const int *n_species,     /* n species */
                       const double *e,          /* n x n matrix */
                       const double *fe,         /* n x n matrix */
                       const double *B,          /* vector of length n */
-                   /* double *dydt, */            /* Output vector of length n */ /*Don't want this*/
+                      const double *invM,       /* 1/M; vector of length n */
+                   /* double *dydt, */            /* Output vector of length n */
+             /* Don't want this^ */
                       double *growth,           /* Output vector of length n */
                       double *respiration,      /* Output vector of length n */
                       double *assimilation,     /* Output matrix of nxn */
@@ -195,7 +197,7 @@ void MyYodzisInnesState(const int *n_species,     /* n species */
             if(!ISNA(fr_numerator[index]) && !ISNAN(fr_numerator[index]) &&
                !ISNA(fr_denominator[col]) && !ISNAN(fr_denominator[col]))
             {
-                const double v = x[col] * y[index] * B[col] * 
+                const double v = x[col] * y[index] * B[col] * invM[col] * 
                                  fr_numerator[index] / fr_denominator[col];
 
                 /* Store the values for this species in the matrices */
@@ -220,7 +222,7 @@ void MyYodzisInnesState(const int *n_species,     /* n species */
             sum += a[index] * B[producers[inner]];
         }
 
-        growth[i] = rho[i] * B[i] * (1.0 - sum / *K);
+        growth[i] = rho[i] * B[i] * (1.0 - sum / *K) * invM[i];
      /* dydt[i] = growth[i] - consumption_t[i];*/ /* Don't want this */
     }
 

@@ -1,7 +1,0 @@
-README
-
-Mathematically speaking this should be on the right timescale.
-If we compute the propensity vector correctly, then everything else follows.
-Note that there are some minor adjustments in RunSimpleGillespieWithMyModel.R
-to limit the possibility of numerical error allowing genuinely 0 propensity
-events occur.

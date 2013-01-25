@@ -211,7 +211,7 @@ Gillespie <- cmpfun(function(x0, t0, a_func, a_args, nu,
     TXEMPTYSIZE <- chunk_size * 20 # Rows
 
     time_start <- Sys.time()
-    cat('Starting run at:', time_start, '\n')
+    cat('Starting run at: '); print(time_start)
 
     termination_reason <- NULL
     # somewhere for eval(Terminator) to assign a string to
